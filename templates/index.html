@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.url.label }}
+            {% if form.url.errors %}
+                {% for error in form.url.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            {% else %}
+                {{ form.url }}
+            {% endif %}
+        </div>
+        {{ form.submit }}
+    </form>
+    <!--
+    <form action="{{ url_for('index') }}" method="POST">
+        <input type="url" id="inputtext" name="inputtext" minlength="4"> <br>
+        <input type="submit" value="Transform" id="submit" name="sumbit">
+    </form>
+    -->
+    {% if newURL %}
+        <br>
+        <div>
+                <a href= {{newURL}} id="newURL"> {{newURL}} </a>
+        </div>
+    {% endif %}
+    </body>
+</html>

@@ -1,0 +1,19 @@
+INFO 2021-02-12 11:54:26,772 Opeining dict.json
+INFO 2021-02-12 11:54:26,772 dict.json has successfuly opened
+DEBUG 2021-02-12 11:54:26,772 Dictionary contains: {"{'http://google.com'}": 'http://localhost:5000/1c'}
+INFO 2021-02-12 11:54:26,813  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO 2021-02-12 11:54:34,304 127.0.0.1 - - [12/Feb/2021 11:54:34] "[37mGET / HTTP/1.1[0m" 200 -
+INFO 2021-02-12 11:54:34,546 127.0.0.1 - - [12/Feb/2021 11:54:34] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO 2021-02-12 12:10:13,908 {'http://facebook.com'}:1c has been added
+INFO 2021-02-12 12:10:13,908 Calling the AddItem function
+INFO 2021-02-12 12:10:13,909 FileManager called to add a new item
+INFO 2021-02-12 12:10:13,909 Starting to read the dictionary
+INFO 2021-02-12 12:10:13,909 Opeining dict.json
+INFO 2021-02-12 12:10:13,910 dict.json has successfuly opened
+DEBUG 2021-02-12 12:10:13,910 Dictionary contains: {"{'http://google.com'}": 'http://localhost:5000/1c'}
+INFO 2021-02-12 12:10:13,910 Reading dictionary ended
+INFO 2021-02-12 12:10:13,910 Starting to append new items{'http://facebook.com'}:http://localhost:5000/1c
+INFO 2021-02-12 12:10:13,910 Starting to write into the dictionary
+INFO 2021-02-12 12:10:13,911 Writing dictionary ended
+INFO 2021-02-12 12:10:13,911 AddItem has returned
+INFO 2021-02-12 12:10:13,914 127.0.0.1 - - [12/Feb/2021 12:10:13] "[37mPOST / HTTP/1.1[0m" 200 -
