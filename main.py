@@ -60,13 +60,26 @@ def index():
         destiny = str({form.url.data}) # Get destiny from the form, if any
         if (hostname in destiny):
             # The destiny includes the HOSTNAME
-            newURL = encoder.shrt2long(destiny) # GET THE ORIGNAL URL
+            logger.info("URL already existng, returning saved data")
+            for key in dictionary: # Look for the URL on the dictionary
+                if dictionary[key] == destiny:
+                    logger.info ("Destiny for " + destiny + " has been found and it's " + key)
+                    newURL = key
+            # newURL = encoder.shrt2long(destiny) # GET THE ORIGNAL URL
         else:
             # The destiny is a real URL
-            newURL = encoder.long2shrt(destiny)
-            logging.info("Calling the AddItem function")
-            fileManager.addItem(destiny, newURL)
-            logging.info("AddItem has returned")
+
+            # Is the destiny already in the dictionary?
+            if destiny in dictionary:
+                logger.info("Encoding for " + destiny + " already exists as " + dictionary[destiny])
+                newURL = dictionary[destiny]
+            else:
+                logger.info("Encoding " + destiny)
+                newURL = encoder.long2shrt(destiny)
+                logger.info("updating Local Dictionary function")
+                updateLocalDict(destiny, newURL)
+                saveDictToDisk()
+                logger.info("AddItem has returned")
         # return redirect(url_for("index"))
     return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL)
 
@@ -76,16 +89,17 @@ def updateLocalDict(destiny, newURL):
         This won't save the current dictionary in disk
 
         Example:
+            updateLocalDict(destinyURL, localURL)
             updateLocalDict(http://google.com, localhost/XXYYZZ)
         """
     dictionary[destiny] = newURL
     return
 
 def saveDictToDisk():
-    """ Save the
-    fileManager.addItem(destiny, newURL)
-    """
-    pass
+    """ Save the current dictionary into the disk """
+    fileManager.writeDict(dictionary)
+    # fileManager.addItem(destiny, newURL)
+
 
 # while(True):
 #     print("//////////////////////////")
