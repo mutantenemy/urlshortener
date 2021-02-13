@@ -1,17 +1,32 @@
 import mechanize
 import time
+hostname="http://localhost:5000/"
 start = time.time()
 
 br = mechanize.Browser()
+codes = []
 
-
-for i in range (10):
-    response = br.open("http://localhost:5000")
+for i in range (1):
+    response = br.open(hostname)
     br.select_form("transformer")         # works when form has a name
     control = br.form.find_control("url")
-    control.value = "http://i.com"
+    control.value = "http://" + str(i) + ".com"
     response = br.submit()
-    print ()
+    for link in br.links():
+        codes.append(link.url[len(hostname):])
+    print (codes[i])
 
-end = time.time()
-print (end - start)
+stop = time.time()
+endCreation = stop - start
+
+for i in range (1):
+    print ("requesting accesst to: " + hostname + str(codes[i]))
+    response = br.open(hostname+str(codes[i]))
+    print (i)
+
+end = time()
+endChecking = end - stop
+
+print("TIME ELAPSED: "+ endChecking + endCreation)
+print("Time creating: "+endCreation)
+print("Time checking: "+endChecking)
