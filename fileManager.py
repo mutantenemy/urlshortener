@@ -38,6 +38,9 @@ class FileManager:
         except OSError:
             print("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
             logger.critical("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
+        except json.decoder.JSONDecodeError:
+            print("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
+            logger.error("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
         finally:
             return
 
