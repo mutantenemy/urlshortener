@@ -18,7 +18,7 @@ fileManager = FileManager()
 
 
 # Define logs file
-# logsFile = fileManager.logsFile
+#logsFile = fileManager.logsFile
 
  ### ENABLE LOGS ###
 LOG_FORMAT = "%(levelname)s %(asctime)s %(message)s"
@@ -57,24 +57,36 @@ def index():
 
     # When the form is valid
     if form.validate_on_submit():
-        destiny = str({form.url.data}) # Get destiny from the form, if any
+        destiny = str(form.url.data) # Get destiny from the form, if any
+
         if (hostname in destiny):
             # The destiny includes the HOSTNAME
             logger.info("URL already existng, returning saved data")
-            for key in dictionary: # Look for the URL on the dictionary
-                if dictionary[key] == destiny:
-                    logger.info ("Destiny for " + destiny + " has been found and it's " + key)
-                    newURL = key
-            # newURL = encoder.shrt2long(destiny) # GET THE ORIGNAL URL
+            destiny = destiny[len(hostname)+1:] # Get the code after "HOSTNAME/"
+            if dictionary[destiny]:
+                # The local URL is in the Dictionary
+                logger.info ("Destiny for " + destiny + " has been found and it's " + dictionary[destiny])
+                newURL = dictionary[destiny] # Look for the original URL in the dictionary
+            else:
+                # The local URL is not in the Dictionary
+                logger.error ("MAIN:INDEX() - Hostname " + hostname + " was in Destiny " + destiny + ", but it's value was empty")
+
         else:
             # The destiny is a real URL
-
             # Is the destiny already in the dictionary?
+
+            #TODO: FLIP KEY/VALUES
+            
+            for key in dictionary:
+                if dictionary[key] == destiny
+                    newURL = key
+                    break
             if destiny in dictionary:
                 logger.info("Encoding for " + destiny + " already exists as " + dictionary[destiny])
                 newURL = dictionary[destiny]
             else:
                 logger.info("Encoding " + destiny)
+                #TODO que devuelva solo el encodeado, no el hostname
                 newURL = encoder.long2shrt(destiny)
                 logger.info("updating Local Dictionary function")
                 updateLocalDict(destiny, newURL)
@@ -83,6 +95,18 @@ def index():
         # return redirect(url_for("index"))
     return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL)
 
+@app.route("/<input>", methods=["GET"])
+def reroute(input):
+    """ For any link that is not index, it will search input in the dictionary and send the user to it """
+    # TODO Checkear errores
+    destiny="index"
+    for key in dictionary: # Look for the URL on the dictionary
+        if dictionary[key] == request.base_url:
+            logger.info ("Destiny for " + input + " has been found and it's " + key)
+            destiny = key
+            break
+    logger.info("gonna take you to " + destiny)
+    return redirect(destiny)
 
 def updateLocalDict(destiny, newURL):
     """ Hold on memory the current dictionary

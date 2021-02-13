@@ -1,5 +1,6 @@
 *.pyc
 *.code-workspace
-*log
+*.log
+*.json
 /.vscode
 /__pycache__

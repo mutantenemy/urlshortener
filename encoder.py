@@ -23,6 +23,8 @@ class Encoder:
         It won't create a new URL for pages already added."""
 
         # Does the original URL exist in the dictionary?
+
+        # TODO se esta fijando de vuelta si esta en memoria
         if self.check4Existing(destiny):
             # The original URL already exists in the dictionary
             logging.info(destiny+" already existed. Sending back it's id.")
