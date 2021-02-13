@@ -38,7 +38,7 @@ except OSError:
 hostname = "http://localhost:5000/"
 dictionary = {} # Here we will store all the elements
 dictionary = fileManager.readDict()
-encoder = Encoder(len(dictionary))
+encoder = Encoder(len(dictionary)+1)
 
 # Call for FLASK
 app = Flask(__name__)
