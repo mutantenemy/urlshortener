@@ -1,44 +1,28 @@
 import logging # Import logging
 
-class Encoder:
+id = 1
+
+class Encoder():
     """ THIS IS THE ENCODER CLASS """
 
-    url2id = {}
-    id = 100
-    hostname = "http://localhost:5000"
+    def __init__(self, id):
+        hostname = "http://localhost:5000/"
+        self.id = id
 
-    ### ENABLE LOGS ###
-    LOG_FORMAT = "%(levelname)s %(asctime)s %(message)s"
-    logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT)
-    logger = logging.getLogger()
-
-    # def __init__(self):
-    #     """ Constructor for the Encoder. """
-    #     # self.url2id = # last saved dictionary
-    #     # id = # last saved ID
-    #     # hostname = # prefered hostname
+        ### ENABLE LOGS ###
+        LOG_FORMAT = "%(levelname)s %(asctime)s %(message)s"
+        logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT)
+        logger = logging.getLogger()
 
     def long2shrt (self, destiny):
         """ Will shorten destiny into a new URL.\n 
-        It won't create a new URL for pages already added."""
+        I won't check has been already added."""
 
-        # Does the original URL exist in the dictionary?
-
-        # TODO se esta fijando de vuelta si esta en memoria
-        if self.check4Existing(destiny):
-            # The original URL already exists in the dictionary
-            logging.info(destiny+" already existed. Sending back it's id.")
-            return self.hostname + "/" +str(self.url2id[destiny])
-        else:
-            # The original URL was not in the dictionary
-            # Creating new entry
-            # Generating new URL code
-            self.url2id[destiny] = self.base62(self.id)
-            logging.info(str(destiny)+":"+str(self.url2id[destiny])+" has been added")
-            # print str(destiny)+":"+str(self.url2id[destiny])+" has been added"
-            newURL = self.base62(self.id)
-            self.id += 1
-            return self.hostname + "/" + str(newURL)
+        # Creating new entry
+        # Generating new URL code
+        newURL = self.base62(self.id)
+        self.id += 1
+        return newURL
 
 
     def shrt2long (self, newURL):

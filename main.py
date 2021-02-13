@@ -34,11 +34,11 @@ except OSError:
 
 
 # orchestrator = Orchestrator()
-encoder = Encoder()
+
 hostname = "http://localhost:5000/"
 dictionary = {} # Here we will store all the elements
-
 dictionary = fileManager.readDict()
+encoder = Encoder(len(dictionary))
 
 # Call for FLASK
 app = Flask(__name__)
@@ -62,7 +62,7 @@ def index():
         if (hostname in destiny):
             # The destiny includes the HOSTNAME
             logger.info("URL already existng, returning saved data")
-            destiny = destiny[len(hostname)+1:] # Get the code after "HOSTNAME/"
+            destiny = destiny[len(hostname):] # Get the code after "HOSTNAME/"
             if dictionary[destiny]:
                 # The local URL is in the Dictionary
                 logger.info ("Destiny for " + destiny + " has been found and it's " + dictionary[destiny])
@@ -73,25 +73,25 @@ def index():
 
         else:
             # The destiny is a real URL
-            # Is the destiny already in the dictionary?
 
-            #TODO: FLIP KEY/VALUES
-            
-            for key in dictionary:
-                if dictionary[key] == destiny
-                    newURL = key
-                    break
-            if destiny in dictionary:
-                logger.info("Encoding for " + destiny + " already exists as " + dictionary[destiny])
-                newURL = dictionary[destiny]
+            # Is the destiny already in the dictionary?
+            if destiny in dictionary.values():
+                logger.info("Destiny " + destiny + " already exists in the dictionary.\nLooking for it's key")
+                for key in dictionary:
+                    if dictionary[key] == destiny:
+                        newCode = key
+                        break
+                logger.info("Encoding for " + destiny + " already exists as " + dictionary[newCode])
+                newURL = hostname + newCode
             else:
-                logger.info("Encoding " + destiny)
+                logger.info("Destiny " + destiny + " doesn't exists in the dictionary\nEncoding " + destiny)
                 #TODO que devuelva solo el encodeado, no el hostname
-                newURL = encoder.long2shrt(destiny)
+                newCode = encoder.long2shrt(destiny)
                 logger.info("updating Local Dictionary function")
-                updateLocalDict(destiny, newURL)
+                updateLocalDict(destiny, newCode)
                 saveDictToDisk()
-                logger.info("AddItem has returned")
+                logger.info("Saving to Disk has ended")
+                newURL = hostname + newCode # Final URL will be the hostname + the new encoding
         # return redirect(url_for("index"))
     return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL)
 
@@ -99,12 +99,7 @@ def index():
 def reroute(input):
     """ For any link that is not index, it will search input in the dictionary and send the user to it """
     # TODO Checkear errores
-    destiny="index"
-    for key in dictionary: # Look for the URL on the dictionary
-        if dictionary[key] == request.base_url:
-            logger.info ("Destiny for " + input + " has been found and it's " + key)
-            destiny = key
-            break
+    destiny = dictionary[input]
     logger.info("gonna take you to " + destiny)
     return redirect(destiny)
 
@@ -113,10 +108,10 @@ def updateLocalDict(destiny, newURL):
         This won't save the current dictionary in disk
 
         Example:
-            updateLocalDict(destinyURL, localURL)
-            updateLocalDict(http://google.com, localhost/XXYYZZ)
+            updateLocalDict(encoded, destinyURL)
+            updateLocalDict(XXYYZZ, http://google.com)
         """
-    dictionary[destiny] = newURL
+    dictionary[newURL] = destiny
     return
 
 def saveDictToDisk():
