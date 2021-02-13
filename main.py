@@ -95,6 +95,7 @@ def index():
         # return redirect(url_for("index"))
     return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL)
 
+
 @app.route("/<input>", methods=["GET"])
 def reroute(input):
     """ For any link that is not index, it will search input in the dictionary and send the user to it """
