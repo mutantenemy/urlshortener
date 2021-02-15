@@ -22,7 +22,7 @@ fileManager = FileManager()
 
  ### ENABLE LOGS ###
 LOG_FORMAT = "%(levelname)s %(asctime)s %(message)s"
-logging.basicConfig(filename = logsFile, level=logging.DEBUG, format=LOG_FORMAT)
+logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT)
 logger = logging.getLogger()
 
 ### Clear logger ###
@@ -148,7 +148,7 @@ def saveDictToDisk():
     # fileManager.addItem(destiny, newURL)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=80, debug=True)
 
 
 # while(True):
