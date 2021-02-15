@@ -7,3 +7,4 @@ class Transform(FlaskForm):
     url = StringField('URL to transform',
                         validators = [DataRequired(), URL(False, message='The URL was invalid. use HTTP://yourURL.com/moreinfo')]) # String field is has content that is an URL
     submit = SubmitField('Transform')
+    remove = SubmitField('Remove')

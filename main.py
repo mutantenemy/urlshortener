@@ -57,43 +57,69 @@ def index():
 
     # When the form is valid
     if form.validate_on_submit():
+
         destiny = str(form.url.data) # Get destiny from the form, if any
 
-        if (hostname in destiny):
-            # The destiny includes the HOSTNAME
-            logger.info("URL already existng, returning saved data")
-            destiny = destiny[len(hostname):] # Get the code after "HOSTNAME/"
-            if dictionary[destiny]:
-                # The local URL is in the Dictionary
-                logger.info ("Destiny for " + destiny + " has been found and it's " + dictionary[destiny])
-                newURL = dictionary[destiny] # Look for the original URL in the dictionary
-            else:
-                # The local URL is not in the Dictionary
-                logger.error ("MAIN:INDEX() - Hostname " + hostname + " was in Destiny " + destiny + ", but it's value was empty")
+        if form.submit.data: # The user wants to transform the data
+            logger.info("ACTION: TRANSFORM")
 
-        else:
-            # The destiny is a real URL
+            if (hostname in destiny): # The destiny includes the HOSTNAME
+                logger.info("URL already existng, returning saved data")
+                destiny = destiny[len(hostname):] # Get the code after "HOSTNAME/"
+                if dictionary[destiny]:
+                    # The local URL is in the Dictionary
+                    logger.info ("Destiny for " + destiny + " has been found and it's " + dictionary[destiny])
+                    newURL = dictionary[destiny] # Look for the original URL in the dictionary
+                else:
+                    # The local URL is not in the Dictionary
+                    logger.error ("MAIN:INDEX() - Hostname " + hostname + " was in Destiny " + destiny + ", but it's value was empty")
 
-            # Is the destiny already in the dictionary?
-            if destiny in dictionary.values():
-                logger.info("Destiny " + destiny + " already exists in the dictionary.\nLooking for it's key")
+            else: # The destiny is a real URL
+
+                # Is the destiny already in the dictionary?
+                if destiny in dictionary.values():
+                    logger.info("Destiny " + destiny + " already exists in the dictionary.\nLooking for it's key")
+                    for key in dictionary:
+                        if dictionary[key] == destiny:
+                            newCode = key
+                            break
+                    logger.info("Encoding for " + destiny + " already exists as " + dictionary[newCode])
+                    newURL = hostname + newCode
+                else:
+                        logger.info("Destiny " + destiny + " doesn't exists in the dictionary\nEncoding " + destiny)
+                        #TODO que devuelva solo el encodeado, no el hostname
+                        newCode = encoder.long2shrt(destiny)
+                        logger.info("updating Local Dictionary function")
+                        updateLocalDict(destiny, newCode)
+                        saveDictToDisk()
+                        logger.info("Saving to Disk has ended")
+                        newURL = hostname + newCode # Final URL will be the hostname + the new encoding
+
+
+        elif (form.remove.data): # The user wants to remove the data
+            logger.debug("ACTION: REMOVE")
+            if destiny[len(hostname):] in dictionary.keys(): # destiny is a local URL
+                destiny = destiny[len(hostname):] # shortnen destiny just once
+                logger.info("Removing " + dictionary[destiny] + ":" + hostname+destiny)
+                dictionary.pop(destiny) # Remove destiny from dictionary
+                saveDictToDisk()
+
+            elif destiny in dictionary.values(): # destiny is a real URL
+                logger.info("Destiny " + destiny + " exists in the dictionary.\nLooking for it's key")
                 for key in dictionary:
                     if dictionary[key] == destiny:
-                        newCode = key
+                        logger.info("Removing " + key + ":" + destiny)
+                        dictionary.pop(key)
+                        saveDictToDisk()
                         break
-                logger.info("Encoding for " + destiny + " already exists as " + dictionary[newCode])
-                newURL = hostname + newCode
-            else:
-                logger.info("Destiny " + destiny + " doesn't exists in the dictionary\nEncoding " + destiny)
-                #TODO que devuelva solo el encodeado, no el hostname
-                newCode = encoder.long2shrt(destiny)
-                logger.info("updating Local Dictionary function")
-                updateLocalDict(destiny, newCode)
-                saveDictToDisk()
-                logger.info("Saving to Disk has ended")
-                newURL = hostname + newCode # Final URL will be the hostname + the new encoding
-        # return redirect(url_for("index"))
+
+            else: # destiny is not part of the dictionary
+                logger.info("ERROR - " + destiny + " is not listed")
+
+
     return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL)
+
+
 
 
 @app.route("/<input>", methods=["GET"])
