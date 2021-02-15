@@ -147,6 +147,9 @@ def saveDictToDisk():
     fileManager.writeDict(dictionary)
     # fileManager.addItem(destiny, newURL)
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 # while(True):
 #     print("//////////////////////////")
