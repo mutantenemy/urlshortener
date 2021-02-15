@@ -37,8 +37,8 @@ except OSError:
 
 hostname = "http://localhost:5000/"
 dictionary = {} # Here we will store all the elements
-dictionary = fileManager.readDict()
-encoder = Encoder(len(dictionary)+1)
+dictionary = fileManager.readDict() # Load saved dictionary
+encoder = Encoder(dictionary["lastcode"]) # set last code used + 1
 
 # Call for FLASK
 app = Flask(__name__)
@@ -112,6 +112,7 @@ def updateLocalDict(destiny, newURL):
             updateLocalDict(encoded, destinyURL)
             updateLocalDict(XXYYZZ, http://google.com)
         """
+    dictionary["lastcode"] = encoder.getID()
     dictionary[newURL] = destiny
     return
 

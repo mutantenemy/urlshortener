@@ -80,3 +80,6 @@ class Encoder():
             index = index // base # Reduce the original index
 
         return "".join(newID[::-1]) # Reverse one by one the characters
+
+    def getID(self):
+        return self.id
