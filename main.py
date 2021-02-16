@@ -40,7 +40,7 @@ except OSError:
 
 hostname = "http://localhost:5000/"
 dictionary = {} # Here we will store all the elements
-try:
+try: # GET STARTING JSON
     dictionary = fileManager.readDict() # Load saved dictionary
 except TypeError: # AN ERROR HAS OCCURED WHILE OPEINING THE JSON
     logger.error("A TYPE error has occurred while opening the dict.json\nTrying one last time")
@@ -49,8 +49,8 @@ except TypeError: # AN ERROR HAS OCCURED WHILE OPEINING THE JSON
     except TypeError: # JSON KEEPS SENDING AN ERROR. CREATE A VOLATIL DICTIONARY
         logger.critical("! CRITICAL ! JSON was not able to load up. Creating a virtual dictionary.\n!!!THIS DATA MIGHT GET LOST!!!")
         dictionary = '{"lastcode": 1}' # 
-finally:
-    encoder = Encoder(dictionary["lastcode"]) # set last code used + 1
+finally: # set last code used + 1
+    encoder = Encoder(dictionary["lastcode"])
 
 # Call for FLASK
 app = Flask(__name__)
@@ -137,10 +137,12 @@ def index():
 @app.route("/<input>", methods=["GET"])
 def reroute(input):
     """ For any link that is not index, it will search input in the dictionary and send the user to it """
-    # TODO Checkear errores
-    destiny = dictionary[input]
-    logger.info("gonna take you to " + destiny)
-    return redirect(destiny)
+    if (input in dictionary.keys()): # Check if newURL actually exists
+        destiny = dictionary[input]
+        logger.info("gonna take you to " + destiny)
+        return redirect(destiny)
+    else: # Send to INDEX page if the new URL didn't exist
+        return redirect(hostname)
 
 
 
