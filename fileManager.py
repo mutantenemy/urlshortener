@@ -3,7 +3,8 @@ import os # Enable OS tools
 import json
 
 # Define logs file
-workspace = "/home/taitz/Documents/Python/urlshortener"
+workspace = "/home/taitz/Documents/Python/urlshortener" # FOR LOCAL TESTING
+# workspace = "" # FOR SERVER TESTING
 logsFile = workspace + "/logs.log"
 dictionary = workspace + "/dict.json"
 

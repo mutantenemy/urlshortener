@@ -11,7 +11,8 @@ class Encoder():
 
         ### ENABLE LOGS ###
         LOG_FORMAT = "%(levelname)s %(asctime)s %(message)s"
-        logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT)
+        # logging.basicConfig(filename = "/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FOR SERVER TESTING
+        logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FOR LOCAL TESTING
         logger = logging.getLogger()
 
     def long2shrt (self, destiny):

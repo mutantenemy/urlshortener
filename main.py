@@ -22,7 +22,8 @@ fileManager = FileManager()
 
  ### ENABLE LOGS ###
 LOG_FORMAT = "%(levelname)s %(asctime)s %(message)s"
-logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT)
+# logging.basicConfig(filename = "/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FOR SERVER TESTING
+logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FORM LOCAL TESTING
 logger = logging.getLogger()
 
 ### Clear logger ###
@@ -130,6 +131,17 @@ def reroute(input):
     logger.info("gonna take you to " + destiny)
     return redirect(destiny)
 
+
+
+
+@app.route("/json", methods=["GET"])
+def json():
+    """ Expose the local json over the webpage """
+    return render_template('json.html', json=str(dictionary))
+
+
+
+
 def updateLocalDict(destiny, newURL):
     """ Hold on memory the current dictionary
         This won't save the current dictionary in disk
@@ -142,13 +154,17 @@ def updateLocalDict(destiny, newURL):
     dictionary[newURL] = destiny
     return
 
+
+
+
 def saveDictToDisk():
     """ Save the current dictionary into the disk """
     fileManager.writeDict(dictionary)
     # fileManager.addItem(destiny, newURL)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=80, debug=True)
+    # app.run(host="0.0.0.0", port=80, debug=True) # FOR SERVER TESTING
+    app.run(debug=True) # FOR LOCAL TESTING
 
 
 # while(True):
