@@ -74,14 +74,5 @@ class FileManager:
         logging.info("Writing dictionary ended")
         return
 
-    def rmvItem(self, item):
-        """ pop out an item from the dictionary """
-
     def backup(self):
         """ save a backup of the dictionary """
-
-    def createLink(self, code):
-        """ Create a new link with the following Code """
-
-    def destroyLink(self, code = None, destiny = None):
-        """ Destroy a link by destiny's URL or by Code """
