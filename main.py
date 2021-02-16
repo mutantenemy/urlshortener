@@ -58,6 +58,9 @@ app = Flask(__name__)
 # Secret Key
 app.config['SECRET_KEY'] = '5d071b5d37b540f9c327e85f9f39f048'
 
+
+
+
 # Create webpages
 @app.route('/', methods=["GET", "POST"]) #index
 def index():
@@ -147,14 +150,14 @@ def reroute(input):
 
 
 @app.route("/debug/json", methods=["GET"])
-def json():
+def json(): # View json
     """ Expose the local json over the webpage """
     return render_template('json.html', json=str(dictionary))
 
 
 
 
-def updateLocalDict(destiny, newURL):
+def updateLocalDict(destiny, newURL): # locally save the new entry
     """ Hold on memory the current dictionary
         This won't save the current dictionary in disk
 
@@ -169,19 +172,14 @@ def updateLocalDict(destiny, newURL):
 
 
 
-def saveDictToDisk():
+def saveDictToDisk(): # Save local dictionary to disk
     """ Save the current dictionary into the disk """
     fileManager.writeDict(dictionary)
     # fileManager.addItem(destiny, newURL)
 
-if __name__ == '__main__':
+
+
+
+if __name__ == '__main__': # SERVER DEBUG OPTIONS
     # app.run(host="0.0.0.0", port=80, debug=True) # FOR SERVER TESTING
     app.run(debug=True) # FOR LOCAL TESTING
-
-
-# while(True):
-#     print("//////////////////////////")
-#     destiny = input("URL to reduce: ")
-#     print(encoder.long2shrt(destiny))
-#     print(encoder.getCode(key="ricky")) # Use 'key = destiny' to get a specific code for that destiny
-#     print(encoder.shrt2long(hostname+"2"))
