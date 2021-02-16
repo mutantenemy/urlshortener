@@ -28,20 +28,34 @@ class FileManager:
             return data
         except OSError:
             print("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
-            logger.critical("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
-            return {}
+            logger.error("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
+            logger.error("!CRITICAL! - CREATING NEW DICTIONARY AT "+dictionary)
+            f = open(dictionary, "xt") # Create a new JSON file
+            f.write('{"lastcode": 1}') # Set the JSON into the correct starting  data
+            f.close # close file
+            return
+        except json.decoder.JSONDecodeError:
+            print("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
+            logger.error("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
+            logger.error("!CRITICAL! - FILLING "+dictionary+" WITH STARTING DATA")
+            f = open(dictionary, "w") # Create a new JSON file
+            f.write('{"lastcode": 1}') # Set the JSON into the correct starting  data
+            f.close # close file
+            return
+
 
     def writeDict(self, data):
         """ Save Dictionary's data into filesystem """
         try:
             with open(dictionary, 'w') as json_file:
-                json.dump(data, json_file)
+                    json.dump(data, json_file)
         except OSError:
             print("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
             logger.critical("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
-        except json.decoder.JSONDecodeError:
-            print("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
-            logger.error("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
+            f = open(dictionary, "xt") # Create a new JSON file
+            with open(dictionary, 'w') as json_file: # Try to save again the json
+                    json.dump(data, json_file)
+            f.close # close file
         finally:
             return
 

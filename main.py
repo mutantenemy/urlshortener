@@ -30,16 +30,27 @@ logger = logging.getLogger()
 try:
     open(logsFile, "w").close()
 except OSError:
-    print("!CRITICAL! - LOGS FILE NOT FOUND AT "+logsFile)
-    logger.critical("!CRITICAL! - LOGS FILE NOT FOUND AT "+logsFile)
+    print("!CRITICAL! - LOGS FILE NOT FOUND AT "+logsFile+"\nCreating a new logs file")
+    logger.critical("!CRITICAL! - LOGS FILE NOT FOUND AT "+logsFile+"\nCreating a new logs file")
+    f = open(logsFile, "xt") # Create a new logs file
+    f.close # close file
 
 
 # orchestrator = Orchestrator()
 
 hostname = "http://localhost:5000/"
 dictionary = {} # Here we will store all the elements
-dictionary = fileManager.readDict() # Load saved dictionary
-encoder = Encoder(dictionary["lastcode"]) # set last code used + 1
+try:
+    dictionary = fileManager.readDict() # Load saved dictionary
+except TypeError: # AN ERROR HAS OCCURED WHILE OPEINING THE JSON
+    logger.error("A TYPE error has occurred while opening the dict.json\nTrying one last time")
+    try: # TRY ONE LAST TIME TO OPEN THE JSON OR CREATE A VOLATIL DICTIONARY
+        dictionary = fileManager.readDict() # Load saved dictionary
+    except TypeError: # JSON KEEPS SENDING AN ERROR. CREATE A VOLATIL DICTIONARY
+        logger.critical("! CRITICAL ! JSON was not able to load up. Creating a virtual dictionary.\n!!!THIS DATA MIGHT GET LOST!!!")
+        dictionary = '{"lastcode": 1}' # 
+finally:
+    encoder = Encoder(dictionary["lastcode"]) # set last code used + 1
 
 # Call for FLASK
 app = Flask(__name__)
