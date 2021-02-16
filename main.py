@@ -147,7 +147,7 @@ def reroute(input):
 
 
 
-@app.route("/json", methods=["GET"])
+@app.route("/debug/json", methods=["GET"])
 def json():
     """ Expose the local json over the webpage """
     return render_template('json.html', json=str(dictionary))
