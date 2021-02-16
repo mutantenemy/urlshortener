@@ -60,7 +60,6 @@ app.config['SECRET_KEY'] = '5d071b5d37b540f9c327e85f9f39f048'
 
 # Create webpages
 @app.route('/', methods=["GET", "POST"]) #index
-@app.route('/index', methods=["GET", "POST"])
 def index():
     ## return render_template(INDEXFILENAME.HTML, DATA)
     form = Transform() # Get custom form
