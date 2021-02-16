@@ -7,6 +7,7 @@
 from flask import Flask, escape, request, render_template, url_for, redirect # Flask tools
 import logging # Enable logging
 import os # Enable OS tools
+import time # Use time to get last access
 from encoder import Encoder # This is our links manager
 from forms import Transform # This is our Flask webpage
 from fileManager import FileManager, logsFile # This will manage out filesystem
@@ -64,6 +65,8 @@ app.config['SECRET_KEY'] = '5d071b5d37b540f9c327e85f9f39f048'
 # Create webpages
 @app.route('/', methods=["GET", "POST"]) #index
 def index():
+    """ This is the main webpage.\n
+    It creates a form where the user writes a URL and it delivers a corresponding code (if remote URL) or an actual webpage (if local URL)\n  """
     ## return render_template(INDEXFILENAME.HTML, DATA)
     form = Transform() # Get custom form
     destiny = None
@@ -138,11 +141,13 @@ def index():
 
 @app.route("/<input>", methods=["GET"])
 def reroute(input):
-    """ For any link that is not index, it will search input in the dictionary and send the user to it """
+    """ For any link that is not index, it will search input in the dictionary and send the user to it. """
     if (input in dictionary.keys()): # Check if newURL actually exists
         destiny = dictionary[input]
-        logger.info("gonna take you to " + destiny)
-        return redirect(destiny)
+        updateDestiny(input)
+        saveDictToDisk()
+        logger.info("gonna take you to " + destiny[0])
+        return redirect(destiny[0])
     else: # Send to INDEX page if the new URL didn't exist
         return redirect(hostname)
 
@@ -158,7 +163,7 @@ def json(): # View json
 
 
 def updateLocalDict(destiny, newURL): # locally save the new entry
-    """ Hold on memory the current dictionary
+    """ Hold on memory the current dictionary.\n
         This won't save the current dictionary in disk
 
         Example:
@@ -166,7 +171,20 @@ def updateLocalDict(destiny, newURL): # locally save the new entry
             updateLocalDict(XXYYZZ, http://google.com)
         """
     dictionary["lastcode"] = encoder.getID()
-    dictionary[newURL] = destiny
+    dictionary[newURL] = [destiny, 0, time.time(), "-"]
+    return
+
+
+
+def updateDestiny(key): # Update the information of given generated URL
+    """ Update local dictionary when a URL is triggered.\n
+    It adds 1 to the count of times accessed.\n
+    It updates the last time accessed.\n
+    It updated local dictionary"""
+    destiny = dictionary[input] # Get data from Generated URL
+    destiny[1] += 1 # Add an access count to the URL
+    destiny[3] = time.time() # Update last day accessed
+    dictionary[input] = destiny # Update local dictionary
     return
 
 
