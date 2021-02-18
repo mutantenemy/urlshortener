@@ -72,6 +72,7 @@ def index():
     form = Transform() # Get custom form
     destiny = None
     newURL = None
+    message = None
 
     # When the form is valid
     if form.validate_on_submit():
@@ -84,56 +85,73 @@ def index():
             if (hostname in destiny): # The destiny includes the HOSTNAME
                 logger.info("URL already existng, returning saved data")
                 destiny = destiny[len(hostname):] # Get the code after "HOSTNAME/"
-                if dictionary[destiny]:
+
+                if dictionary[destiny]: # Does the code exist in the Dictionary?
                     # The local URL is in the Dictionary
-                    logger.info ("Destiny for " + destiny + " has been found and it's " + dictionary[destiny])
-                    newURL = dictionary[destiny] # Look for the original URL in the dictionary
-                else:
-                    # The local URL is not in the Dictionary
-                    logger.error ("MAIN:INDEX() - Hostname " + hostname + " was in Destiny " + destiny + ", but it's value was empty")
+                    logger.info ("Destiny for " + destiny + " has been found.")
+                    data = dictionary[destiny] # Get the full list from the local URL
+                    newURL = data[1] # Get the Remote URL from the list associated to the local URL
+                    logger.info("Local URL " + destiny + " is associated to " + newURL)
+                else: # The local URL is not part of the dictionary
+                    logger.warning ("MAIN:INDEX() - Local URL " + destiny + " is not part of the saved data.")
 
             else: # The destiny is a real URL
 
                 # Is the destiny already in the dictionary?
-                if destiny in dictionary.values():
-                    logger.info("Destiny " + destiny + " already exists in the dictionary.\nLooking for it's key")
-                    for key in dictionary:
-                        if dictionary[key] == destiny:
-                            newCode = key
-                            break
-                    logger.info("Encoding for " + destiny + " already exists as " + dictionary[newCode])
-                    newURL = hostname + newCode
-                else:
-                        logger.info("Destiny " + destiny + " doesn't exists in the dictionary\nEncoding " + destiny)
-                        #TODO que devuelva solo el encodeado, no el hostname
-                        newCode = encoder.long2shrt(destiny)
-                        logger.info("updating Local Dictionary function")
-                        updateLocalDict(destiny, newCode)
-                        saveDictToDisk()
-                        logger.info("Saving to Disk has ended")
-                        newURL = hostname + newCode # Final URL will be the hostname + the new encoding
+                logger.info("Check if " + destiny + " already exists.")
+                newURL = long2shrt(destiny)
+                if (newURL == None): # Failed to find destiny in the dictionary. Create a new entry.
+                    logger.info("Generating new code")
+                    newCode = encoder.long2shrt()
+                    logger.info("Creating new URLData object")
+                    urlData = URLData(newCode, destiny)
+                    logger.info("updating Local Dictionary")
+                    updateLocalDict(newCode, urlData)
+                    saveDictToDisk()
+                    logger.info("Saving to Disk has ended")
+                    newURL = hostname + newCode # Final URL will be the hostname + the new encoding
+
+                # if destiny in dictionary.values():
+                #     logger.info("Destiny " + destiny + " already exists in the dictionary.\nLooking for it's key")
+                #     for key in dictionary:
+                #         if dictionary[key] == destiny:
+                #             newCode = key
+                #             break
+                #     logger.info("Encoding for " + destiny + " already exists as " + dictionary[newCode])
+                #     newURL = hostname + newCode
+                # else:
+                        # logger.info("Destiny " + destiny + " doesn't exists in the dictionary\nEncoding " + destiny)
+                        # #TODO que devuelva solo el encodeado, no el hostname
+                        # newCode = encoder.long2shrt()
+                        # logger.info("updating Local Dictionary function")
+                        # updateLocalDict(destiny, newCode)
+                        # saveDictToDisk()
+                        # logger.info("Saving to Disk has ended")
+                        # newURL = hostname + newCode # Final URL will be the hostname + the new encoding
 
 
         elif (form.remove.data): # The user wants to remove the data
             logger.debug("ACTION: REMOVE")
+            localURL = None
+
             if destiny[len(hostname):] in dictionary.keys(): # destiny is a local URL
-                destiny = destiny[len(hostname):] # shortnen destiny just once
-                logger.info("Removing " + dictionary[destiny] + ":" + hostname+destiny)
-                dictionary.pop(destiny) # Remove destiny from dictionary
+                logger.info("The URL is registered and it's local")
+                localURL = destiny[len(hostname):] # shortnen destiny just once
+                remoteURL = dictionary[localURL][1]
+
+            elif destiny in str(dictionary): # Look if the destiny is registered
+                logger.info("The Remote URL is registered")
+                localURL = long2shrt(destiny) # Get the local URL for the remote one
+                remoteURL = destiny
+
+            else:
+                logger.info("The URL wasn't in the registry")
+
+            if(localURL): # True if there is a URL to remove
+                dictionary.pop(localURL) # Destroy link between local and remote URL
                 saveDictToDisk()
-
-            elif destiny in dictionary.values(): # destiny is a real URL
-                logger.info("Destiny " + destiny + " exists in the dictionary.\nLooking for it's key")
-                for key in dictionary:
-                    if dictionary[key] == destiny:
-                        logger.info("Removing " + key + ":" + destiny)
-                        dictionary.pop(key)
-                        saveDictToDisk()
-                        break
-
-            else: # destiny is not part of the dictionary
-                logger.info("ERROR - " + destiny + " is not listed")
-
+                logger.info("Link between " + localURL + " and " + remoteURL + " has been destroyed.")
+                # message = "Link between " + localURL + " and " + remoteURL + " has been destroyed."
 
     return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL)
 
@@ -143,12 +161,13 @@ def index():
 @app.route("/<input>", methods=["GET"])
 def reroute(input):
     """ For any link that is not index, it will search input in the dictionary and send the user to it. """
+
     if (input in dictionary.keys()): # Check if newURL actually exists
-        destiny = dictionary[input]
-        updateDestiny(input)
-        saveDictToDisk()
-        logger.info("gonna take you to " + destiny[0])
-        return redirect(destiny[0])
+        destiny = dictionary[input][1] # Get the Remote URL from the corresponding JSON
+        # TODO updateDestiny(input)
+        # TODO saveDictToDisk()
+        logger.info("gonna take you to " + destiny)
+        return redirect(destiny)
     else: # Send to INDEX page if the new URL didn't exist
         return redirect(hostname)
 
@@ -163,16 +182,60 @@ def json(): # View json
 
 
 
-def updateLocalDict(destiny, newURL): # locally save the new entry
+# def shrt2long(localURL):
+#     """ This method looks for the actual URL of localURL.\n
+#     Only pass the code of the localURL as a string.\n
+#     Example:
+#         remoteURL = shrt2long("c2U") """
+#     logger.info ("Looking for " + localURL + " remote URL")
+#     try: # Is the localURL present in the dictionary?
+#         data = dictionary[localURL]
+#     except KeyError: # localURL hasn't been found in the dictionary
+#         logger.warning ("Could not find local code " + localURL)
+#         return None
+#     else: # localURL exists in the dictionary
+#         logger.info ("Could find " + localURL ". Retriving Data.")
+#         return data.getRemote() # Get remote URL from the urlData object
+#      return None # If anything goes wrong, return None
+
+
+
+def long2shrt(remoteURL): # Get the Local URL for an existing Remote URL.
+    """ Get the Local URL for an existing Remote URL.\n
+    Example:
+        localURL = long2shrt(remoteURL)
+        localURL = long2shrt("http://google.com")"""
+    logger.info("Looking at all the values")
+    for value in dictionary.values(): # Get every value
+        try: # The first item of the JSON is not serialized
+            r = value[1]
+            # logger.debug("Looking at URLData for " + value.getLocal() ":" + value.getRemote() )
+        except TypeError:
+            logger.warning("Tried to load a json for item " + str(value) + " but it wasn't serialized.")
+        else:
+            try:
+                if remoteURL == r: # If the remote URL value has been found, return the local URL
+                    logger.info("Remote URL " + remoteURL + " is associated to local " + value[0])
+                    return value[0] # Return local URL
+            except AttributeError: # This occurs it's trying to open a non URLData object.
+                logger.warning("Tried to get the Remote URL for " + str(value) + " but it wasn't a URLDeta object.")
+            except UnboundLocalError:
+                logger.warning("Tried to get the Remote URL for " + str(value) + " but it wasn't a big enough list")
+    # The remoteURL is not part of dictionary
+    logger.info(remoteURL + " is not part of the saved dictionary")
+    return None
+
+
+
+def updateLocalDict(newURL, urlData): # locally save the new entry
     """ Hold on memory the current dictionary.\n
         This won't save the current dictionary in disk
 
         Example:
-            updateLocalDict(encoded, destinyURL)
+            updateLocalDict(encoded, urlData)
             updateLocalDict(XXYYZZ, http://google.com)
         """
-    dictionary["lastcode"] = encoder.getID()
-    dictionary[newURL] = [destiny, 0, time.time(), "-"]
+    dictionary[newURL] = urlData.getList()
     return
 
 
@@ -182,10 +245,13 @@ def updateDestiny(key): # Update the information of given generated URL
     It adds 1 to the count of times accessed.\n
     It updates the last time accessed.\n
     It updated local dictionary"""
-    destiny = dictionary[input] # Get data from Generated URL
-    destiny[1] += 1 # Add an access count to the URL
-    destiny[3] = time.time() # Update last day accessed
-    dictionary[input] = destiny # Update local dictionary
+    # TODO: Addapt to urlDataObjects
+    logger.debug("!CRITICAL! - MISSING ACTIONS TO UPDATE URLDATA")
+    print ("!CRITICAL! - MISSING ACTIONS TO UPDATE URLDATA")
+    # destiny = dictionary[input] # Get data from Generated URL
+    # destiny[1] += 1 # Add an access count to the URL
+    # destiny[3] = time.time() # Update last day accessed
+    # dictionary[input] = destiny # Update local dictionary
     return
 
 
