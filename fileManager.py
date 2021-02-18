@@ -27,21 +27,22 @@ class FileManager:
             logging.debug("Dictionary contains: " + str(data))
             return data
         except OSError:
-            print("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
-            logger.error("!CRITICAL! - DICTIONARY FILE NOT FOUND AT "+dictionary)
-            logger.error("!CRITICAL! - CREATING NEW DICTIONARY AT "+dictionary)
+            print("!CRITICAL! - DICTIONARY FILE NOT FOUND AT " + dictionary)
+            logger.error("!CRITICAL! - DICTIONARY FILE NOT FOUND AT " + dictionary)
+            logger.error("!CRITICAL! - CREATING NEW DICTIONARY AT " + dictionary)
             f = open(dictionary, "xt") # Create a new JSON file
             f.write('{"lastcode": 1}') # Set the JSON into the correct starting  data
             f.close # close file
             return
         except json.decoder.JSONDecodeError:
-            print("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
-            logger.error("!CRITICAL! - DICTIONARY "+dictionary+" WAS EMPTY")
-            logger.error("!CRITICAL! - FILLING "+dictionary+" WITH STARTING DATA")
+            print("!CRITICAL! - DICTIONARY " + dictionary + " WAS EMPTY")
+            logger.error("!CRITICAL! - DICTIONARY " + dictionary + " WAS EMPTY")
+            logger.error("!CRITICAL! - FILLING " + dictionary + " WITH STARTING DATA")
+            data = '{"lastcode": 1}' # Define starting JSON. It needs to be a STR for saving correctly
             f = open(dictionary, "w") # Create a new JSON file
-            f.write('{"lastcode": 1}') # Set the JSON into the correct starting  data
+            f.write(data) # Set the JSON into the correct starting data
             f.close # close file
-            return
+            return dict("lascode",1) # Take out the ' as it no longer needs to be a string
 
 
     def writeDict(self, data):

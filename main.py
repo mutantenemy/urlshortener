@@ -42,6 +42,7 @@ except OSError:
 
 hostname = "http://localhost:5000/"
 dictionary = {} # Here we will store all the elements
+
 try: # GET STARTING JSON
     dictionary = fileManager.readDict() # Load saved dictionary
 except TypeError: # AN ERROR HAS OCCURED WHILE OPEINING THE JSON
@@ -50,9 +51,8 @@ except TypeError: # AN ERROR HAS OCCURED WHILE OPEINING THE JSON
         dictionary = fileManager.readDict() # Load saved dictionary
     except TypeError: # JSON KEEPS SENDING AN ERROR. CREATE A VOLATIL DICTIONARY
         logger.critical("! CRITICAL ! JSON was not able to load up. Creating a virtual dictionary.\n!!!THIS DATA MIGHT GET LOST!!!")
-        dictionary = '{"lastcode": 1}' # 
-finally: # set last code used + 1
-    encoder = Encoder(dictionary["lastcode"])
+        dictionary = {"lastcode": 1}#
+encoder = Encoder(id = dictionary["lastcode"])
 
 # Call for FLASK
 app = Flask(__name__)
@@ -93,19 +93,22 @@ def index():
                     newURL = data[1] # Get the Remote URL from the list associated to the local URL
                     logger.info("Local URL " + destiny + " is associated to " + newURL)
                 else: # The local URL is not part of the dictionary
-                    logger.warning ("MAIN:INDEX() - Local URL " + destiny + " is not part of the saved data.")
+                        logger.warning ("MAIN:INDEX() - Local URL " + destiny + " is not part of the saved data.")
 
             else: # The destiny is a real URL
 
                 # Is the destiny already in the dictionary?
                 logger.info("Check if " + destiny + " already exists.")
-                newURL = long2shrt(destiny)
-                if (newURL == None): # Failed to find destiny in the dictionary. Create a new entry.
+                if destiny in str(dictionary): # destiny is in the dictionary.
+                    logger.info(destiny + " exists. Extracting code")
+                    newURL = long2shrt(destiny) # Get code
+                    newURL = hostname + newURL # Printable version
+                else: # Failed to find destiny in the dictionary. Create a new entry.
                     logger.info("Generating new code")
                     newCode = encoder.long2shrt()
                     logger.info("Creating new URLData object")
                     urlData = URLData(newCode, destiny)
-                    logger.info("updating Local Dictionary")
+                    logger.info("Updating Local Dictionary")
                     updateLocalDict(newCode, urlData)
                     saveDictToDisk()
                     logger.info("Saving to Disk has ended")
@@ -130,7 +133,7 @@ def index():
                         # newURL = hostname + newCode # Final URL will be the hostname + the new encoding
 
 
-        elif (form.remove.data): # The user wants to remove the data
+        elif form.remove.data: # The user wants to remove the data
             logger.debug("ACTION: REMOVE")
             localURL = None
 

@@ -5,7 +5,7 @@ id = 1
 class Encoder():
     """ THIS IS THE ENCODER CLASS """
 
-    def __init__(self, id):
+    def __init__(self, id = 1):
         hostname = "http://localhost:5000/"
         self.id = id
 
@@ -16,7 +16,7 @@ class Encoder():
         logger = logging.getLogger()
 
     def long2shrt (self):
-        """ Will shorten destiny into a new URL.\n 
+        """ Will shorten destiny into a new URL.\n
         I won't check has been already added."""
 
         # Creating new entry
