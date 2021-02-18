@@ -15,7 +15,7 @@ class Encoder():
         logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FOR LOCAL TESTING
         logger = logging.getLogger()
 
-    def long2shrt (self, destiny):
+    def long2shrt (self):
         """ Will shorten destiny into a new URL.\n 
         I won't check has been already added."""
 
