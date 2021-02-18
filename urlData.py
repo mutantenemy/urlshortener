@@ -20,7 +20,9 @@ class URLData():
     Example:
         URLData(newURL, destiny,) """
 
-    def __init__(self, local, remote, calls = 0, born = time.time(), lastUsed = 0.0, urlData=None):
+    def __init__(self, local, remote, calls = 0,
+                born = time.asctime(time.localtime(time.time())),
+                lastUsed = 0.0, urlData=None):
         """ Makes a URLData object. \n
         You can import a urlData list as follows:
             [local, remote, calls, born, lastUsed]"""

@@ -167,8 +167,8 @@ def reroute(input):
 
     if (input in dictionary.keys()): # Check if newURL actually exists
         destiny = dictionary[input][1] # Get the Remote URL from the corresponding JSON
-        # TODO updateDestiny(input)
-        # TODO saveDictToDisk()
+        updateDestinyData(input)
+        saveDictToDisk()
         logger.info("gonna take you to " + destiny)
         return redirect(destiny)
     else: # Send to INDEX page if the new URL didn't exist
@@ -182,24 +182,6 @@ def json(): # View json
     """ Expose the local json over the webpage """
     return render_template('json.html', json=str(dictionary))
 
-
-
-
-# def shrt2long(localURL):
-#     """ This method looks for the actual URL of localURL.\n
-#     Only pass the code of the localURL as a string.\n
-#     Example:
-#         remoteURL = shrt2long("c2U") """
-#     logger.info ("Looking for " + localURL + " remote URL")
-#     try: # Is the localURL present in the dictionary?
-#         data = dictionary[localURL]
-#     except KeyError: # localURL hasn't been found in the dictionary
-#         logger.warning ("Could not find local code " + localURL)
-#         return None
-#     else: # localURL exists in the dictionary
-#         logger.info ("Could find " + localURL ". Retriving Data.")
-#         return data.getRemote() # Get remote URL from the urlData object
-#      return None # If anything goes wrong, return None
 
 
 
@@ -243,18 +225,14 @@ def updateLocalDict(newURL, urlData): # locally save the new entry
 
 
 
-def updateDestiny(key): # Update the information of given generated URL
+def updateDestinyData(key): # Update the information of given generated URL
     """ Update local dictionary when a URL is triggered.\n
     It adds 1 to the count of times accessed.\n
     It updates the last time accessed.\n
     It updated local dictionary"""
-    # TODO: Addapt to urlDataObjects
-    logger.debug("!CRITICAL! - MISSING ACTIONS TO UPDATE URLDATA")
-    print ("!CRITICAL! - MISSING ACTIONS TO UPDATE URLDATA")
-    # destiny = dictionary[input] # Get data from Generated URL
-    # destiny[1] += 1 # Add an access count to the URL
-    # destiny[3] = time.time() # Update last day accessed
-    # dictionary[input] = destiny # Update local dictionary
+
+    dictionary[key][2] = dictionary[key][2] + 1 # Increase the amount of times URL has been accessed
+    dictionary[key][4] = time.asctime(time.localtime(time.time())) # Update date it was accessed
     return
 
 
