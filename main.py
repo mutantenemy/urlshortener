@@ -148,15 +148,16 @@ def index():
                 remoteURL = destiny
 
             else:
-                logger.info("The URL wasn't in the registry")
+                logger.info("The URL " + destiny + " wasn't in the registry")
+                message = "The URL " + destiny + " wasn't in the registry"
 
             if(localURL): # True if there is a URL to remove
                 dictionary.pop(localURL) # Destroy link between local and remote URL
                 saveDictToDisk()
                 logger.info("Link between " + localURL + " and " + remoteURL + " has been destroyed.")
-                # message = "Link between " + localURL + " and " + remoteURL + " has been destroyed."
+                message = "Link between " + localURL + " and " + remoteURL + " has been destroyed."
 
-    return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL)
+    return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL, message=message)
 
 
 
