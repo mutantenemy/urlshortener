@@ -12,16 +12,16 @@ El _bot.py_ para testear el tiempo de creación, requiere **PYHTON3** y **Mechan
 
 Existe un _dockerfile_ para crear una imagen. Ver la seccion de Docker
 
-### Cómo usar la página:
+## Cómo usar la página:
 
-### Cómo ver los datos guardados en _dict.json_
+## Cómo ver los datos guardados en _dict.json_
 
 Se puede acceder a los datos guardados en disco entrando a **localhost:5000/debug/json**
 
-### BOT
+## BOT
 
 
-### Docker
+## Docker
 
 Para correr el programa en un container de docker, hace falta _switchear_ los campos con comentarios marcados con **FOR LOCAL TESTING** y **FOR SERVER TESTING** que se encuentran en _main.py_, _encoder.py_ y _filemanager.py_
 
