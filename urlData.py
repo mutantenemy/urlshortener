@@ -64,7 +64,6 @@ class URLData():
         """ Return a list of the whole object as follows:
             [local, remote, calls, born, lastUsed] """
         items = [self.local, self.remote, self.calls, self.born, self.lastUsed]
-        logger.debug("ITEMS: " + items[1])
         return items
 
     def fromList(self, list):

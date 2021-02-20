@@ -114,27 +114,8 @@ def index():
                     logger.info("Saving to Disk has ended")
                     newURL = hostname + newCode # Final URL will be the hostname + the new encoding
 
-                # if destiny in dictionary.values():
-                #     logger.info("Destiny " + destiny + " already exists in the dictionary.\nLooking for it's key")
-                #     for key in dictionary:
-                #         if dictionary[key] == destiny:
-                #             newCode = key
-                #             break
-                #     logger.info("Encoding for " + destiny + " already exists as " + dictionary[newCode])
-                #     newURL = hostname + newCode
-                # else:
-                        # logger.info("Destiny " + destiny + " doesn't exists in the dictionary\nEncoding " + destiny)
-                        # #TODO que devuelva solo el encodeado, no el hostname
-                        # newCode = encoder.long2shrt()
-                        # logger.info("updating Local Dictionary function")
-                        # updateLocalDict(destiny, newCode)
-                        # saveDictToDisk()
-                        # logger.info("Saving to Disk has ended")
-                        # newURL = hostname + newCode # Final URL will be the hostname + the new encoding
-
-
         elif form.remove.data: # The user wants to remove the data
-            logger.debug("ACTION: REMOVE")
+            logger.info("ACTION: REMOVE")
             localURL = None
 
             if destiny[len(hostname):] in dictionary.keys(): # destiny is a local URL
@@ -195,7 +176,6 @@ def long2shrt(remoteURL): # Get the Local URL for an existing Remote URL.
     for value in dictionary.values(): # Get every value
         try: # The first item of the JSON is not serialized
             r = value[1]
-            # logger.debug("Looking at URLData for " + value.getLocal() ":" + value.getRemote() )
         except TypeError:
             logger.warning("Tried to load a json for item " + str(value) + " but it wasn't serialized.")
         else:
@@ -219,7 +199,7 @@ def updateLocalDict(newURL, urlData): # locally save the new entry
 
         Example:
             updateLocalDict(encoded, urlData)
-            updateLocalDict(XXYYZZ, http://google.com)
+            updateLocalDict(XXYYZZ, urlData.fromList([local, remote, calls, born, lastUsed]))
         """
         
     dictionary[newURL] = urlData.getList()
@@ -243,7 +223,6 @@ def updateDestinyData(key): # Update the information of given generated URL
 def saveDictToDisk(): # Save local dictionary to disk
     """ Save the current dictionary into the disk """
     fileManager.writeDict(dictionary)
-    # fileManager.addItem(destiny, newURL)
 
 
 
