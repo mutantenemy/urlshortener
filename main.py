@@ -20,12 +20,12 @@ fileManager = FileManager()
 
 
 # Define logs file
-#logsFile = fileManager.logsFile
+logsFile = "/urlshortener/logs.log"
 
  ### ENABLE LOGS ###
 LOG_FORMAT = "%(levelname)s %(asctime)s %(message)s"
-# logging.basicConfig(filename = "/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FOR SERVER TESTING
-logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FORM LOCAL TESTING
+logging.basicConfig(filename = logsFile, level=logging.DEBUG, format=LOG_FORMAT) # FOR SERVER TESTING
+#logging.basicConfig(filename = "/home/taitz/Documents/Python/urlshortener/logs.log", level=logging.DEBUG, format=LOG_FORMAT) # FORM LOCAL TESTING
 logger = logging.getLogger()
 
 ### Clear logger ###
@@ -40,7 +40,7 @@ except OSError:
 
 # orchestrator = Orchestrator()
 
-hostname = "http://localhost:5000/"
+hostname = "http://localhost:80/"
 dictionary = {} # Here we will store all the elements
 
 try: # GET STARTING JSON
@@ -52,7 +52,7 @@ except TypeError: # AN ERROR HAS OCCURED WHILE OPEINING THE JSON
     except TypeError: # JSON KEEPS SENDING AN ERROR. CREATE A VOLATIL DICTIONARY
         logger.critical("! CRITICAL ! JSON was not able to load up. Creating a virtual dictionary.\n!!!THIS DATA MIGHT GET LOST!!!")
         dictionary = {"lastcode": 1}#
-encoder = Encoder(id = dictionary["lastcode"])
+encoder = Encoder(id = 1)
 
 # Call for FLASK
 app = Flask(__name__)
@@ -221,6 +221,7 @@ def updateLocalDict(newURL, urlData): # locally save the new entry
             updateLocalDict(encoded, urlData)
             updateLocalDict(XXYYZZ, http://google.com)
         """
+        
     dictionary[newURL] = urlData.getList()
     return
 
@@ -248,5 +249,5 @@ def saveDictToDisk(): # Save local dictionary to disk
 
 
 if __name__ == '__main__': # SERVER DEBUG OPTIONS
-    # app.run(host="0.0.0.0", port=80, debug=True) # FOR SERVER TESTING
-    app.run(debug=True) # FOR LOCAL TESTING
+    app.run(host="0.0.0.0", port=80, debug=True) # FOR SERVER TESTING
+    # app.run(debug=True) # FOR LOCAL TESTING
