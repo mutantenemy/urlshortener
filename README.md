@@ -2,18 +2,18 @@
 
 _Este programa usa PYTHON para acortar URLs._
 
-## Requerimientos
 
+## Requerimientos
 El proyecto está pensado para ejecutarlo en un servidor Linux.
 
-La página y la lógica requiere **PYTHON 3.8.6 64b**, **flask**, **flask_wtf**
+La página y la lógica requiere **PYTHON 3.8.6 64-bit**, **flask**, **flask_wtf**
 
-El _bot.py_ para testear el tiempo de creación, requiere **PYTHON 3.8.6 64b** y **Mechanize**
+El _bot.py_ para testear el tiempo de creación, requiere **PYTHON 3.8.6 64-bit** y **Mechanize**
 
 Existe un _dockerfile_ para crear una imagen. Ver la seccion de Docker
 
-## Cómo usar la página:
 
+## Cómo usar la página:
 La página poseé un campo de texto y dos botones para ejecutar sus funciones, _Transform_ y _Remove_.
 
 Al ingresar un destino fuera de este dominio, se genera e imprime un link que permite a los usuarios utilizarlo como proxy del destino real.
@@ -27,29 +27,29 @@ Si la página descripta no corresponde a un vinculo en funcionamiento, aparece u
 
 También es posible ver el contenido guardado en disco de los datos guardados visitando _localhost/debug/json_.
 
+
 ## Breve repaso de los archivos:
- 
-Python:
-main.py
-fileManager.py
-encoder.py
-urlData.py
-forms.py
- 
+PYTHON:
+**main.py** > Main va a crear la página y administrar la mayoria de la lógica.
+**fileManager.py** > Esto se ocupa de escribir los datos al disco.
+**encoder.py** > Esto genera el código para los vinculos locales.
+**urlData.py** > Esto serializa los vinculos creados como arrays.
+**forms.py** > Esto se ocupa de generar el formulario con _jinja_.
+
 HTML:
-index.html
-json.html
- 
-Archivos autogenerados:
-dict.json
-logs.log
- 
-Python no integrados o de asistencia:
-bot.py
-tables.py
-logger.py
-orchestrator.py
- 
+**index.html** > Index presenta el formulario y otros datos generados en _main.py_
+**json.html** Está página se utliza para poder revisar _dict.json_ desde la web.(Se accede mediante _localhost/debug/json_)
+
+ARCHIVOS AUTOGENERADOS:
+**dict.json** > Este archivo almacena el proximo al último indice usado, los vinculos creados y su metadata.
+**logs.log** > Este archivo presenta los logs que ocurren durante la ejecución. (Se borran cada vez que se lanza el server)
+
+PYTHON NO INTEGRADO O DE ASISTENCIA:
+**bot.py** > Este programa se útiliza para crear cualquier cantidad de vinculos en poco tiempo y saber cuanto demoró.
+**tables.py** > Esta clase se iba a utilizar para generar tablas HTML para mostrar los metadatos en index.
+**logger.py** > Este archivo guarda el formato en el que el logger funciona.
+**orchestrator.py** > Esta clase se iba a ocupar monitorear los recursos para optimizar la ejecucion del programa.
+
 
 ## Cómo funciona el backend de la página:
 
@@ -63,6 +63,7 @@ Luego intenta leer el archivo _dict.json_ que guarda en disco el siguiente del u
 Si el archivo no existe, crea uno nuevo con un index de 1.
 
 Finalmente entra en un loop para mantener la página corriendo en 0.0.0.0:80 y en debug por si se hacen cambios en runtime
+
 
 ### Validar el texto ingresado
 El texto ingresado es validado en el archivo _forms.py_ por las herramientas que entrega **Flask**.
@@ -80,6 +81,7 @@ Una vez que se genera el nuevo link local, se vincula en un diccionario el códi
 
 Finalmente se le imprime al usuario el vinculo generado.
 
+
 ### Obtener la URL local apartir de un destino remoto
 La transformación la administra _main.py_. Cada vez que se valida una URL exitosamente, se pregunta si es que la pagina ingresada es local o externa y si se encuentra o no registrada.
 
@@ -87,10 +89,18 @@ Si el destino es remoto y está registrado, se revisa entre los vinculos ya gene
 
 Finalmente se le imprime al usuario el vinculo generado.
 
+
 ### Obtener el destino apartir de una URL local
 La transformación la administra _main.py_. Cada vez que se valida una URL exitosamente, se pregunta si es que la pagina ingresada es local o externa y si se encuentra o no registrada.
 
 Si el destino ingresado pertenece a nuestra página, se revisa si su código aún es valido. De ser así, facilmente obtenemos el destino real consultando al diccionario.
+
+
+### Utilizar una URL generada
+Al intentar abrir una URL generada valida, _main.py_ actualiza su metadata incrementando la cantidad de llamadas y su útlimo uso. Luego redirige al usuario a la página vinculada sin interrupción.
+
+Si la URL es de dominio local pero no corresponde a ninugn vinculo activo, el usuario es llevado automaticamente al index.
+
 
 ### Quitar un vinculo
 El remover un vinculo es administrado por _main.py_. Al intentar remover una direccion, se consulta si es parte o no del diccionario ya existente.
@@ -99,9 +109,10 @@ Si la información ingresada pertenecía a un link local o link externo ya regis
 
 Finalmente se le muestra al usuario un mensaje de exito o fracaso en la accion.
 
-## Cómo ver los datos guardados en _dict.json_
 
+## Cómo ver los datos guardados en _dict.json_
 Se puede acceder a los datos guardados en disco entrando a _localhost/debug/json_
+
 
 ## BOT
 El bot actualmente funciona únicamente para intentar generar nuevos links. Se elije el tamaño del loop que se quiere realizar y le ingresa a la página un dominio remoto "_http://[i].com_"
@@ -110,7 +121,6 @@ Despues de esto, el bot escupe cuanto tiempo demoró en generar todos estos link
 
 
 ## Docker
-
 Para correr el programa en un container de docker, hace falta _switchear_ los campos con comentarios marcados con **FOR LOCAL TESTING** y **FOR SERVER TESTING** que se encuentran en _main.py_, _encoder.py_ y _filemanager.py_
 
 ```
