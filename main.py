@@ -8,11 +8,13 @@ from flask import Flask, escape, request, render_template, url_for, redirect # F
 import logging # Enable logging
 import os # Enable OS tools
 import time # Use time to get last access
-from encoder import Encoder # This is our links manager
+# from orchestrator import Orchestrator # This is meant to be a class that reads CPU and net usage and determined the most optimal workload.
+from encoder import Encoder # This is our code creator
 from forms import Transform # This is our Flask webpage
 from fileManager import FileManager, logsFile # This will manage out filesystem
-from urlData import URLData
-# from orchestrator import Orchestrator
+from urlData import URLData # This is the object that holds the data and metadata for each link
+# from tables import makeTable # This is meant to be an object that formats HTML tables
+
 
 
 # fileManager will be responsible in interacting with our OS's file system
@@ -137,6 +139,10 @@ def index():
                 saveDictToDisk()
                 logger.info("Link between " + localURL + " and " + remoteURL + " has been destroyed.")
                 message = "Link between " + localURL + " and " + remoteURL + " has been destroyed."
+
+    # GET TABLE
+    # table = MakeTable.makeTable(dictionary)
+    # HERE I WOULD HAVE WORKED ON A PRESENTABLE TABLE FOR THE INDEX SCREEN.
 
     return render_template('index.html', methods=["POST"], title="URL Shortener", form=form, newURL=newURL, message=message)
 

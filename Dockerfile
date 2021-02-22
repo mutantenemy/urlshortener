@@ -19,6 +19,8 @@ RUN pip install flask_wtf
 
 RUN pip install mechanize
 
+RUN pip install flask-table
+
 WORKDIR /urlshortener
 COPY . /urlshortener
 
