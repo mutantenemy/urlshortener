@@ -1,6 +1,6 @@
 import mechanize
 import time
-hostname="http://localhost:5000/"
+hostname="http://localhost:80/"
 start = time.time()
 
 br = mechanize.Browser()
