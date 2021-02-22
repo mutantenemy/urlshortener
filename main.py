@@ -42,7 +42,7 @@ except OSError:
 
 # orchestrator = Orchestrator()
 
-hostname = "http://localhost:80/"
+hostname = "http://localhost/"
 dictionary = {} # Here we will store all the elements
 
 try: # GET STARTING JSON
@@ -88,14 +88,15 @@ def index():
                 logger.info("URL already existng, returning saved data")
                 destiny = destiny[len(hostname):] # Get the code after "HOSTNAME/"
 
-                if dictionary[destiny]: # Does the code exist in the Dictionary?
+                if destiny in dictionary.keys(): # Does the code exist in the Dictionary?
                     # The local URL is in the Dictionary
                     logger.info ("Destiny for " + destiny + " has been found.")
                     data = dictionary[destiny] # Get the full list from the local URL
                     newURL = data[1] # Get the Remote URL from the list associated to the local URL
                     logger.info("Local URL " + destiny + " is associated to " + newURL)
                 else: # The local URL is not part of the dictionary
-                        logger.warning ("MAIN:INDEX() - Local URL " + destiny + " is not part of the saved data.")
+                    logger.warning ("MAIN:INDEX() - Local URL " + destiny + " is not part of the saved data.")
+                     message = "Remote link for local code " + destiny + " doesn't exist. It might have been removed."
 
             else: # The destiny is a real URL
 
